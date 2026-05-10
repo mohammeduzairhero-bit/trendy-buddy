@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trendy Buddy - Gadgets & Toys</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --primary: #FF6B2B;
+    --primary-dark: #E5531A;
+    --accent: #FFD93D;
+    --bg: #F7F4EF;
+    --card: #FFFFFF;
+    --text: #1A1A2E;
+    --muted: #6B7280;
+    --border: #E5E7EB;
+    --green: #22C55E;
+    --badge: #FF3B5C;
+  }
+  body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* NAV */
+  nav {
+    background: #1A1A2E;
+    position: sticky; top: 0; z-index: 100;
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+  }
+  .logo { font-family: 'Baloo 2', cursive; font-size: 1.7rem; color: var(--accent); letter-spacing: 1px; }
+  .logo span { color: var(--primary); }
+  .nav-right { display: flex; align-items: center; gap: 1.2rem; }
+  .cart-btn {
+    background: var(--primary); color: #fff; border: none; border-radius: 2rem;
+    padding: 0.45rem 1.2rem; font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 1rem;
+    cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: background 0.2s;
+    position: relative;
+  }
+  .cart-btn:hover { background: var(--primary-dark); }
+  .cart-count {
+    background: var(--badge); color: #fff; font-size: 0.72rem; font-weight: 800;
+    border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;
+    position: absolute; top: -7px; right: -7px;
+  }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, #1A1A2E 0%, #16213E 60%, #0F3460 100%);
+    padding: 3rem 2rem 2.5rem;
+    text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '🎮 🚀 🤖 🎯 🛸 🎲 🔋 📡';
+    font-size: 2rem;
+    position: absolute; top: 10px; left: 0; right: 0;
+    opacity: 0.12; letter-spacing: 20px;
+    pointer-events: none;
+  }
+  .hero h1 { font-family: 'Baloo 2', cursive; font-size: 2.8rem; color: var(--accent); margin-bottom: 0.5rem; }
+  .hero p { color: #CBD5E1; font-size: 1.1rem; font-weight: 600; margin-bottom: 1.5rem; }
+  .search-bar {
+    max-width: 480px; margin: 0 auto;
+    display: flex; background: #fff; border-radius: 2rem; overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+  }
+  .search-bar input {
+    flex: 1; border: none; outline: none; padding: 0.75rem 1.2rem;
+    font-family: 'Nunito', sans-serif; font-size: 1rem; color: var(--text);
+  }
+  .search-bar button {
+    background: var(--primary); color: #fff; border: none; padding: 0 1.4rem;
+    font-size: 1.1rem; cursor: pointer; font-weight: 700;
+  }
+
+  /* FILTERS */
+  .filters {
+    display: flex; gap: 0.6rem; flex-wrap: wrap; padding: 1.2rem 2rem 0.5rem;
+    justify-content: center;
+  }
+  .filter-btn {
+    background: var(--card); border: 1.5px solid var(--border); color: var(--text);
+    padding: 0.38rem 1.1rem; border-radius: 2rem; font-family: 'Nunito', sans-serif;
+    font-weight: 700; font-size: 0.92rem; cursor: pointer; transition: all 0.15s;
+  }
+  .filter-btn.active, .filter-btn:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+  /* GRID */
+  .section-title { font-family: 'Baloo 2', cursive; font-size: 1.5rem; color: var(--text); padding: 1.2rem 2rem 0.2rem; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.2rem; padding: 0.8rem 2rem 2rem;
+  }
+
+  /* CARD */
+  .card {
+    background: var(--card); border-radius: 16px; overflow: hidden;
+    border: 1px solid var(--border);
+    transition: transform 0.15s, box-shadow 0.15s;
+    display: flex; flex-direction: column;
+  }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 8px 32px rgba(0,0,0,0.10); }
+  .card-img-wrap {
+    position: relative; background: #F1F5F9;
+    height: 190px; overflow: hidden;
+  }
+  .card-img-wrap img {
+    width: 100%; height: 100%; object-fit: contain;
+    padding: 12px; transition: transform 0.2s;
+  }
+  .card:hover .card-img-wrap img { transform: scale(1.05); }
+  .tag {
+    position: absolute; top: 10px; left: 10px;
+    background: var(--badge); color: #fff; font-size: 0.7rem; font-weight: 800;
+    padding: 3px 10px; border-radius: 2rem; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .card-body { padding: 0.8rem 1rem 1rem; flex: 1; display: flex; flex-direction: column; gap: 0.4rem; }
+  .card-name { font-weight: 700; font-size: 0.97rem; color: var(--text); line-height: 1.3; }
+  .card-cat { font-size: 0.78rem; color: var(--muted); font-weight: 600; }
+  .card-price { font-family: 'Baloo 2', cursive; font-size: 1.3rem; color: var(--primary); font-weight: 800; }
+  .card-price .old { font-size: 0.85rem; color: var(--muted); text-decoration: line-through; font-family: 'Nunito', sans-serif; font-weight: 600; margin-left: 6px; }
+  .stars { font-size: 0.85rem; color: var(--accent); }
+  .add-btn {
+    margin-top: auto; width: 100%; padding: 0.55rem; border: none; border-radius: 10px;
+    background: var(--primary); color: #fff; font-family: 'Nunito', sans-serif;
+    font-weight: 800; font-size: 0.95rem; cursor: pointer; transition: background 0.15s;
+    display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+  }
+  .add-btn:hover { background: var(--primary-dark); }
+  .add-btn.added { background: var(--green); }
+
+  /* CART MODAL */
+  .overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+    z-index: 200; align-items: flex-start; justify-content: flex-end;
+  }
+  .overlay.open { display: flex; }
+  .cart-panel {
+    background: #fff; width: 380px; max-width: 100vw; height: 100vh;
+    overflow-y: auto; display: flex; flex-direction: column;
+    box-shadow: -4px 0 32px rgba(0,0,0,0.15);
+    animation: slideIn 0.22s ease;
+  }
+  @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+  .cart-header {
+    padding: 1.2rem 1.4rem; background: #1A1A2E; color: #fff;
+    display: flex; align-items: center; justify-content: space-between;
+    font-family: 'Baloo 2', cursive; font-size: 1.3rem;
+  }
+  .close-btn { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; }
+  .cart-items { flex: 1; padding: 1rem; display: flex; flex-direction: column; gap: 0.8rem; }
+  .cart-item {
+    display: flex; gap: 0.8rem; align-items: center;
+    border: 1px solid var(--border); border-radius: 12px; padding: 0.7rem;
+  }
+  .cart-item img { width: 64px; height: 64px; object-fit: contain; border-radius: 8px; background: #F1F5F9; padding: 4px; }
+  .cart-item-info { flex: 1; }
+  .cart-item-name { font-weight: 700; font-size: 0.88rem; }
+  .cart-item-price { color: var(--primary); font-weight: 800; font-size: 0.95rem; }
+  .remove-btn { background: none; border: none; color: var(--badge); font-size: 1.2rem; cursor: pointer; }
+  .cart-footer { padding: 1rem 1.4rem; border-top: 1px solid var(--border); }
+  .cart-total { font-family: 'Baloo 2', cursive; font-size: 1.4rem; color: var(--text); margin-bottom: 1rem; }
+  .whatsapp-btn {
+    width: 100%; padding: 0.85rem; border: none; border-radius: 12px;
+    background: #25D366; color: #fff; font-family: 'Nunito', sans-serif;
+    font-weight: 800; font-size: 1.05rem; cursor: pointer; display: flex;
+    align-items: center; justify-content: center; gap: 0.6rem; transition: background 0.15s;
+  }
+  .whatsapp-btn:hover { background: #1aaa52; }
+  .empty-cart { text-align: center; padding: 3rem 1rem; color: var(--muted); font-size: 1rem; font-weight: 600; }
+
+  /* FOOTER */
+  footer {
+    background: #1A1A2E; color: #9CA3AF; text-align: center;
+    padding: 1.5rem; font-size: 0.9rem; margin-top: 2rem;
+  }
+  footer span { color: var(--accent); font-weight: 700; }
+
+  @media(max-width: 600px) {
+    .grid { padding: 0.8rem 1rem 2rem; }
+    .hero h1 { font-size: 2rem; }
+    .filters { padding: 1rem 1rem 0.5rem; }
+    .section-title { padding: 1rem 1rem 0.2rem; }
+    nav { padding: 0 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Trendy<span>Buddy</span></div>
+  <div class="nav-right">
+    <button class="cart-btn" onclick="openCart()">
+      🛒 Cart
+      <span class="cart-count" id="cartCount">0</span>
+    </button>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>🚀 Gadgets & Toys</h1>
+  <p>Latest tech gadgets, remote toys, drones & more!</p>
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Search products..." oninput="filterProducts()">
+    <button>🔍</button>
+  </div>
+</div>
+
+<div class="filters">
+  <button class="filter-btn active" onclick="setFilter('All', this)">All</button>
+  <button class="filter-btn" onclick="setFilter('Remote Toys', this)">Remote Toys</button>
+  <button class="filter-btn" onclick="setFilter('Drones', this)">Drones</button>
+  <button class="filter-btn" onclick="setFilter('Gadgets', this)">Gadgets</button>
+  <button class="filter-btn" onclick="setFilter('Smart Devices', this)">Smart Devices</button>
+  <button class="filter-btn" onclick="setFilter('Gaming', this)">Gaming</button>
+  <button class="filter-btn" onclick="setFilter('Robots', this)">Robots</button>
+</div>
+
+<div class="section-title" id="sectionTitle">🔥 All Products</div>
+<div class="grid" id="productGrid"></div>
+
+<!-- Cart Overlay -->
+<div class="overlay" id="cartOverlay" onclick="closeCartOnBg(event)">
+  <div class="cart-panel">
+    <div class="cart-header">
+      🛒 Your Cart
+      <button class="close-btn" onclick="closeCart()">✕</button>
+    </div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-footer" id="cartFooter" style="display:none">
+      <div class="cart-total" id="cartTotal"></div>
+      <button class="whatsapp-btn" onclick="sendWhatsApp()">
+        📲 Order via WhatsApp
+      </button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  &copy; 2025 <span>TrendyBuddy</span> — Your go-to gadget store 🚀
+</footer>
+
+<script>
+const PHONE = '917418984160';
+
+const products = [
+  // Remote Toys
+  { id:1, name:'RC Monster Truck 4WD', cat:'Remote Toys', price:1299, old:1799, tag:'HOT', img:'https://images-na.ssl-images-amazon.com/images/I/71t7JoRk7eL._AC_SL1500_.jpg', stars:4 },
+  { id:2, name:'RC Racing Car Turbo', cat:'Remote Toys', price:899, old:1299, tag:'SALE', img:'https://images-na.ssl-images-amazon.com/images/I/71GhkHvz3jL._AC_SL1500_.jpg', stars:4 },
+  { id:3, name:'Remote Control Helicopter', cat:'Remote Toys', price:1499, old:2199, tag:'NEW', img:'https://images-na.ssl-images-amazon.com/images/I/71O6LTCjtGL._AC_SL1500_.jpg', stars:5 },
+  { id:4, name:'RC Speed Boat', cat:'Remote Toys', price:1199, old:1599, tag:'HOT', img:'https://images-na.ssl-images-amazon.com/images/I/71e7yZ5mTuL._AC_SL1500_.jpg', stars:4 },
+
+  // Drones
+  { id:5, name:'Mini Drone with Camera', cat:'Drones', price:2499, old:3499, tag:'HOT', img:'https://images-na.ssl-images-amazon.com/images/I/618F4ZR17DL._AC_SL1500_.jpg', stars:5 },
+  { id:6, name:'Foldable FPV Drone', cat:'Drones', price:3999, old:5499, tag:'NEW', img:'https://images-na.ssl-images-amazon.com/images/I/71wPFzOcOEL._AC_SL1500_.jpg', stars:4 },
+
+  // Gadgets
+  { id:7, name:'Smart LED Desk Lamp', cat:'Gadgets', price:599, old:899, tag:'SALE', img:'https://images-na.ssl-images-amazon.com/images/I/71y4wEJvhNL._AC_SL1500_.jpg', stars:4 },
+  { id:8, name:'Wireless Earbuds Pro', cat:'Gadgets', price:1299, old:1999, tag:'HOT', img:'https://images-na.ssl-images-amazon.com/images/I/61i7lKrFNtL._AC_SL1500_.jpg', stars:5 },
+  { id:9, name:'Portable Power Bank 20000mAh', cat:'Gadgets', price:799, old:1199, tag:'SALE', img:'https://images-na.ssl-images-amazon.com/images/I/71jxD1w5ZvL._AC_SL1500_.jpg', stars:4 },
+  { id:10, name:'Mini Bluetooth Speaker', cat:'Gadgets', price:699, old:999, tag:'NEW', img:'https://images-na.ssl-images-amazon.com/images/I/71mNfpfP6mL._AC_SL1500_.jpg', stars:4 },
+
+  // Smart Devices
+  { id:11, name:'Smart Watch Fitness Band', cat:'Smart Devices', price:1999, old:2999, tag:'HOT', img:'https://images-na.ssl-images-amazon.com/images/I/61g3jX4VqbL._AC_SL1500_.jpg', stars:5 },
+  { id:12, name:'Smart Plug WiFi', cat:'Smart Devices', price:449, old:699, tag:'SALE', img:'https://images-na.ssl-images-amazon.com/images/I/61yt5tDgW6L._AC_SL1500_.jpg', stars:4 },
+
+  // Gaming
+  { id:13, name:'Gaming Controller Wireless', cat:'Gaming', price:1799, old:2499, tag:'HOT', img:'https://images-na.ssl-images-amazon.com/images/I/71o8Q5XJS5L._AC_SL1500_.jpg', stars:5 },
+  { id:14, name:'Gaming Headset RGB', cat:'Gaming', price:1599, old:2199, tag:'NEW', img:'https://images-na.ssl-images-amazon.com/images/I/71Wg3S8xNwL._AC_SL1500_.jpg', stars:4 },
+  { id:15, name:'Mini Arcade Stick', cat:'Gaming', price:999, old:1399, tag:'SALE', img:'https://images-na.ssl-images-amazon.com/images/I/71UL5MVJhvL._AC_SL1500_.jpg', stars:4 },
+
+  // Robots
+  { id:16, name:'Programmable Robot Kit', cat:'Robots', price:2999, old:3999, tag:'NEW', img:'https://images-na.ssl-images-amazon.com/images/I/71XbM4BCWXL._AC_SL1500_.jpg', stars:5 },
+  { id:17, name:'Smart Robot Dog Toy', cat:'Robots', price:1899, old:2499, tag:'HOT', img:'https://images-na.ssl-images-amazon.com/images/I/71l0DJz7NaL._AC_SL1500_.jpg', stars:4 },
+];
+
+// Use Unsplash fallback images via topic if Amazon blocks
+const fallbackImgs = {
+  'Remote Toys': 'https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=400&q=80',
+  'Drones': 'https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=400&q=80',
+  'Gadgets': 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=400&q=80',
+  'Smart Devices': 'https://images.unsplash.com/photo-1544117519-31a4b719223d?w=400&q=80',
+  'Gaming': 'https://images.unsplash.com/photo-1593305841991-05c297ba4575?w=400&q=80',
+  'Robots': 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=400&q=80',
+};
+
+// Better product images using Unsplash
+const productImages = [
+  'https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=400&q=80',
+  'https://images.unsplash.com/photo-1590577976322-3d2d6e2130d5?w=400&q=80',
+  'https://images.unsplash.com/photo-1519455953755-af066f52f1a6?w=400&q=80',
+  'https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=400&q=80',
+  'https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=400&q=80',
+  'https://images.unsplash.com/photo-1527430253228-e93688616381?w=400&q=80',
+  'https://images.unsplash.com/photo-1563461660947-507ef49e9c47?w=400&q=80',
+  'https://images.unsplash.com/photo-1585155770447-2f66e2a397b5?w=400&q=80',
+  'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=400&q=80',
+  'https://images.unsplash.com/photo-1608841828084-f5d0d0e2dba8?w=400&q=80',
+  'https://images.unsplash.com/photo-1544117519-31a4b719223d?w=400&q=80',
+  'https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&q=80',
+  'https://images.unsplash.com/photo-1593305841991-05c297ba4575?w=400&q=80',
+  'https://images.unsplash.com/photo-1574169208507-84376144848b?w=400&q=80',
+  'https://images.unsplash.com/photo-1555680202-c86f0e12f086?w=400&q=80',
+  'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=400&q=80',
+  'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80',
+];
+
+// Assign better images
+products.forEach((p, i) => { p.img = productImages[i % productImages.length]; });
+
+let cart = [];
+let activeFilter = 'All';
+let searchQuery = '';
+
+function stars(n) {
+  return '★'.repeat(n) + '☆'.repeat(5 - n);
+}
+
+function renderProducts() {
+  let filtered = products.filter(p => {
+    const matchCat = activeFilter === 'All' || p.cat === activeFilter;
+    const matchSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.cat.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchCat && matchSearch;
+  });
+  const grid = document.getElementById('productGrid');
+  grid.innerHTML = filtered.length === 0
+    ? '<p style="padding:2rem;color:#888;grid-column:1/-1">No products found.</p>'
+    : filtered.map(p => `
+      <div class="card">
+        <div class="card-img-wrap">
+          <img src="${p.img}" alt="${p.name}" onerror="this.src='${fallbackImgs[p.cat]}'">
+          ${p.tag ? `<span class="tag">${p.tag}</span>` : ''}
+        </div>
+        <div class="card-body">
+          <div class="card-cat">${p.cat}</div>
+          <div class="card-name">${p.name}</div>
+          <div class="stars">${stars(p.stars)}</div>
+          <div class="card-price">₹${p.price.toLocaleString('en-IN')}<span class="old">₹${p.old.toLocaleString('en-IN')}</span></div>
+          <button class="add-btn" id="btn-${p.id}" onclick="addToCart(${p.id})">
+            🛒 Add to Cart
+          </button>
+        </div>
+      </div>
+    `).join('');
+}
+
+function setFilter(f, el) {
+  activeFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('sectionTitle').textContent = f === 'All' ? '🔥 All Products' : `📦 ${f}`;
+  renderProducts();
+}
+
+function filterProducts() {
+  searchQuery = document.getElementById('searchInput').value;
+  renderProducts();
+}
+
+function addToCart(id) {
+  const p = products.find(x => x.id === id);
+  const existing = cart.find(x => x.id === id);
+  if (existing) {
+    existing.qty++;
+  } else {
+    cart.push({ ...p, qty: 1 });
+  }
+  updateCartCount();
+  const btn = document.getElementById('btn-' + id);
+  if (btn) {
+    btn.classList.add('added');
+    btn.textContent = '✅ Added!';
+    setTimeout(() => { btn.classList.remove('added'); btn.innerHTML = '🛒 Add to Cart'; }, 1200);
+  }
+}
+
+function removeFromCart(id) {
+  cart = cart.filter(x => x.id !== id);
+  updateCartCount();
+  renderCart();
+}
+
+function updateCartCount() {
+  const total = cart.reduce((s, x) => s + x.qty, 0);
+  document.getElementById('cartCount').textContent = total;
+}
+
+function openCart() {
+  document.getElementById('cartOverlay').classList.add('open');
+  renderCart();
+}
+
+function closeCart() {
+  document.getElementById('cartOverlay').classList.remove('open');
+}
+
+function closeCartOnBg(e) {
+  if (e.target === document.getElementById('cartOverlay')) closeCart();
+}
+
+function renderCart() {
+  const itemsEl = document.getElementById('cartItems');
+  const footerEl = document.getElementById('cartFooter');
+  if (cart.length === 0) {
+    itemsEl.innerHTML = '<div class="empty-cart">🛒<br><br>Your cart is empty!<br>Add some cool gadgets 😎</div>';
+    footerEl.style.display = 'none';
+    return;
+  }
+  itemsEl.innerHTML = cart.map(p => `
+    <div class="cart-item">
+      <img src="${p.img}" alt="${p.name}" onerror="this.src='${fallbackImgs[p.cat]}'">
+      <div class="cart-item-info">
+        <div class="cart-item-name">${p.name}</div>
+        <div style="font-size:0.78rem;color:#888">Qty: ${p.qty}</div>
+        <div class="cart-item-price">₹${(p.price * p.qty).toLocaleString('en-IN')}</div>
+      </div>
+      <button class="remove-btn" onclick="removeFromCart(${p.id})">✕</button>
+    </div>
+  `).join('');
+  const total = cart.reduce((s, x) => s + x.price * x.qty, 0);
+  document.getElementById('cartTotal').textContent = `Total: ₹${total.toLocaleString('en-IN')}`;
+  footerEl.style.display = 'block';
+}
+
+function sendWhatsApp() {
+  if (cart.length === 0) return;
+  const total = cart.reduce((s, x) => s + x.price * x.qty, 0);
+  let msg = `🛍️ *New Order from TrendyBuddy!*\n\n`;
+  cart.forEach(p => {
+    msg += `▶ *${p.name}*\n`;
+    msg += `   Category: ${p.cat}\n`;
+    msg += `   Qty: ${p.qty} × ₹${p.price.toLocaleString('en-IN')} = ₹${(p.price * p.qty).toLocaleString('en-IN')}\n`;
+    msg += `   Image: ${p.img}\n\n`;
+  });
+  msg += `━━━━━━━━━━━━━━\n`;
+  msg += `💰 *Total: ₹${total.toLocaleString('en-IN')}*\n\n`;
+  msg += `Please confirm my order! 🙏`;
+  const url = `https://wa.me/${PHONE}?text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank');
+}
+
+renderProducts();
+</script>
+</body>
+</html>
