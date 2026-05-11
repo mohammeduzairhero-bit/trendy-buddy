@@ -7,6 +7,8 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✏️</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Baloo+2:wght@700;800;900&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>emailjs.init("FAjKnnb2rbqN0tAbj");</script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 :root{
@@ -761,12 +763,9 @@ footer{background:var(--navy2);color:white;margin-top:48px;}
       <span id="freeShipMsg"></span>
       <div class="free-ship-progress"><div class="free-ship-fill" id="freeShipFill"></div></div>
     </div>
-    <button class="checkout-btn" onclick="openCheckoutModal()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Place Order
-    </button>
-    <button class="wa-btn" onclick="orderViaWhatsApp()">
-      <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.534 5.851L.057 23.886a.5.5 0 0 0 .611.612l6.083-1.487A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.89 0-3.663-.524-5.173-1.432l-.371-.222-3.851.941.968-3.803-.242-.386A9.94 9.94 0 0 1 2 12c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10z"/></svg>
-      Order via WhatsApp
+    <button class="checkout-btn" onclick="openCheckoutModal()" style="background:linear-gradient(135deg,#ffd200,#f5c400);color:var(--navy);font-size:15px;padding:13px;border-radius:10px;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:800;box-shadow:0 4px 16px rgba(255,210,0,.35);">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      Purchase Now
     </button>
   </div>
 </div>
@@ -797,40 +796,36 @@ footer{background:var(--navy2);color:white;margin-top:48px;}
 <div class="checkout-modal" id="checkoutModal">
   <div class="checkout-modal-box">
     <div class="checkout-modal-head">
-      <h3>📦 Complete Your Order</h3>
+      <h3>🛍️ Complete Your Order</h3>
       <button class="panel-close" onclick="closeCheckoutModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
     </div>
     <div class="checkout-modal-body">
+
+      <!-- Order Summary -->
       <div class="co-section">
-        <div class="co-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>Delivery Address</div>
-        <div class="co-row">
-          <input class="co-input" id="coName" placeholder="Full Name *">
-          <input class="co-input" id="coPhone" placeholder="Phone *" type="tel">
-        </div>
-        <input class="co-input" id="coAddress" placeholder="House No, Street, Area *">
-        <div class="co-row">
-          <input class="co-input" id="coCity" placeholder="City / Town *">
-          <input class="co-input" id="coPincode" placeholder="Pincode *" type="number">
-        </div>
-        <select class="co-select" id="coState" onchange="updateShippingCost()">
+        <div class="co-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1" ry="1"/></svg>Order Summary</div>
+        <div id="coItemsSummary" style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.7;"></div>
+        <div class="ship-info-row"><span><strong>Total</strong></span><span id="coTotal" style="font-size:16px;font-weight:900;color:var(--navy);">₹0</span></div>
+      </div>
+
+      <!-- Delivery Details -->
+      <div class="co-section">
+        <div class="co-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>Your Details</div>
+        <input class="co-input" id="coName" placeholder="Full Name *" autocomplete="name">
+        <input class="co-input" id="coPhone" placeholder="WhatsApp / Phone Number *" type="tel" maxlength="10" autocomplete="tel">
+        <select class="co-select" id="coState" onchange="updateOrderTotal()">
           <option value="">Select State *</option>
           <option value="Tamil Nadu">Tamil Nadu</option>
           <option value="Kerala">Kerala</option>
           <option value="Karnataka">Karnataka</option>
+          <option value="Andhra Pradesh">Andhra Pradesh</option>
+          <option value="Telangana">Telangana</option>
           <option value="Other">Other State</option>
         </select>
+        <input class="co-input" id="coPincode" placeholder="Pincode *" type="number" maxlength="6" oninput="updateOrderTotal()">
       </div>
 
-      <div class="co-section">
-        <div class="co-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>Coupon Code</div>
-        <div id="couponArea">
-          <div class="coupon-row">
-            <input type="text" id="couponInput" placeholder="Enter coupon code (e.g. TB10)" oninput="this.value=this.value.toUpperCase()">
-            <button class="coupon-btn" onclick="applyCoupon()">Apply</button>
-          </div>
-        </div>
-      </div>
-
+      <!-- Payment Method -->
       <div class="co-section">
         <div class="co-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Payment Method</div>
         <div class="payment-options">
@@ -841,18 +836,16 @@ footer{background:var(--navy2);color:white;margin-top:48px;}
         <div id="paymentNote" style="font-size:11px;color:var(--text2);margin-top:8px;padding:8px 12px;background:var(--gray);border-radius:7px;">💵 Pay cash when your order arrives at your doorstep.</div>
       </div>
 
-      <div class="co-section">
-        <div class="co-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1" ry="1"/></svg>Order Summary</div>
-        <div id="coItemsSummary" style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.7;"></div>
+      <!-- Total -->
+      <div class="co-section" style="background:var(--gray);border-radius:10px;padding:12px 14px;">
         <div class="ship-info-row"><span>Subtotal</span><span id="coSubtotal">₹0</span></div>
-        <div class="ship-info-row" id="coDiscountRow" style="display:none;"><span style="color:var(--green2);">🎁 Coupon Discount</span><span id="coDiscount" style="color:var(--green2);">-₹0</span></div>
-        <div class="ship-info-row"><span>Shipping <span class="ship-chip" id="coShipChip">—</span></span><span id="coShipping">—</span></div>
-        <div class="ship-info-row"><span><strong>Total</strong></span><span id="coTotal">₹0</span></div>
+        <div class="ship-info-row"><span>Shipping <span id="coShipChip" class="ship-chip">—</span></span><span id="coShipping">—</span></div>
+        <div class="ship-info-row" style="margin-top:6px;padding-top:6px;border-top:1px solid var(--gray2);"><span><strong>Grand Total</strong></span><span id="coGrandTotal" style="font-size:17px;font-weight:900;color:var(--navy);">₹0</span></div>
       </div>
 
-      <button class="place-order-btn" onclick="submitCheckoutOrder()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        Confirm Order
+      <button class="place-order-btn" id="placeOrderBtn" onclick="submitCheckoutOrder()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
+        Continue &amp; Place Order
       </button>
     </div>
   </div>
@@ -946,6 +939,10 @@ window.doLogin = async function(){
 };
 window.doLogout = async function(){ await signOut(auth); showToast('Logged out'); closeAccountModal(); };
 
+// ===== STORE CONTACT INFO (update these) =====
+const STORE_WA_NUMBER = '918489004706';   // WhatsApp number with country code
+const STORE_EMAIL     = 'trendybuddy@gmail.com'; // Your email address
+
 // Shipping
 function getShippingCost(state, subtotal) {
   if(subtotal >= 999) return 0;
@@ -954,56 +951,15 @@ function getShippingCost(state, subtotal) {
   return 120;
 }
 
-window.updateShippingCost = function(){
+window.updateOrderTotal = function(){
   const state = document.getElementById('coState').value;
   const sub = cartTotal();
-  const couponDisc = window._couponDiscount || 0;
   const ship = getShippingCost(state, sub);
   document.getElementById('coSubtotal').textContent = fmt(sub);
   document.getElementById('coShipping').textContent = ship === 0 ? '🎉 FREE' : fmt(ship);
   document.getElementById('coShipChip').textContent = state || '—';
-  document.getElementById('coTotal').textContent = fmt(sub - couponDisc + ship);
-  if(couponDisc > 0){
-    document.getElementById('coDiscountRow').style.display = 'flex';
-    document.getElementById('coDiscount').textContent = `-${fmt(couponDisc)}`;
-  }
-};
-
-// Coupon
-window.applyCoupon = function(){
-  const code = document.getElementById('couponInput').value.trim().toUpperCase();
-  const coupons = { 'TB10': 10, 'TRENDY20': 20, 'BUDDY15': 15, 'FIRST50': 50 };
-  if(!code){ showToast('Enter a coupon code'); return; }
-  if(coupons[code]){
-    const pct = coupons[code];
-    const sub = cartTotal();
-    const disc = Math.round(sub * pct / 100);
-    window._couponCode = code;
-    window._couponDiscount = disc;
-    window._couponPct = pct;
-    document.getElementById('couponArea').innerHTML = `
-      <div class="coupon-applied">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
-        ${code} applied — ${pct}% off (${fmt(disc)} saved)
-        <button onclick="removeCoupon()">✕</button>
-      </div>`;
-    updateShippingCost();
-    showToast(`🎁 Coupon applied! ${pct}% off`);
-  } else {
-    showToast('Invalid coupon code');
-  }
-};
-window.removeCoupon = function(){
-  window._couponCode = null;
-  window._couponDiscount = 0;
-  window._couponPct = 0;
-  document.getElementById('couponArea').innerHTML = `
-    <div class="coupon-row">
-      <input type="text" id="couponInput" placeholder="Enter coupon code (e.g. TB10)" oninput="this.value=this.value.toUpperCase()">
-      <button class="coupon-btn" onclick="applyCoupon()">Apply</button>
-    </div>`;
-  document.getElementById('coDiscountRow').style.display = 'none';
-  updateShippingCost();
+  document.getElementById('coGrandTotal').textContent = fmt(sub + ship);
+  document.getElementById('coTotal').textContent = fmt(sub);
 };
 
 // Payment
@@ -1021,87 +977,162 @@ window.selectPayment = function(method){
 
 window.openCheckoutModal = function(){
   if(!window.cart.length){ showToast('Cart is empty!'); return; }
-  if(!window._currentUser){ showToast('Please login to place order'); openAccountModal(); return; }
-  window._couponDiscount = 0; window._couponCode = null; window._couponPct = 0;
   window._paymentMethod = 'cod';
-  // Reset coupon
-  document.getElementById('couponArea').innerHTML = `
-    <div class="coupon-row">
-      <input type="text" id="couponInput" placeholder="Enter coupon code (e.g. TB10)" oninput="this.value=this.value.toUpperCase()">
-      <button class="coupon-btn" onclick="applyCoupon()">Apply</button>
-    </div>`;
-  document.getElementById('coDiscountRow').style.display = 'none';
   document.querySelectorAll('.pay-opt').forEach(el=>el.classList.remove('active'));
   document.getElementById('pay-cod').classList.add('active');
   document.getElementById('paymentNote').textContent = '💵 Pay cash when your order arrives at your doorstep.';
   // Items summary
   document.getElementById('coItemsSummary').innerHTML = window.cart.map(i=>
-    `<div style="display:flex;justify-content:space-between;padding:2px 0;"><span>${i.name} ×${i.qty}</span><span style="font-weight:700;color:var(--navy)">${fmt(i.price*i.qty)}</span></div>`
+    `<div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px dashed var(--gray2);"><span style="flex:1;">${i.name} ×${i.qty}</span><span style="font-weight:700;color:var(--navy);margin-left:8px;">${fmt(i.price*i.qty)}</span></div>`
   ).join('');
-  updateShippingCost();
+  // Reset fields
+  ['coName','coPhone','coPincode'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+  document.getElementById('coState').value = '';
+  updateOrderTotal();
   closePanels();
   document.getElementById('checkoutModal').classList.add('show');
   document.body.style.overflow='hidden';
 };
+
 window.closeCheckoutModal = function(){
   document.getElementById('checkoutModal').classList.remove('show');
   document.body.style.overflow='';
 };
 
 window.submitCheckoutOrder = async function(){
-  const name = document.getElementById('coName').value.trim();
-  const phone = document.getElementById('coPhone').value.trim();
-  const address = document.getElementById('coAddress').value.trim();
-  const city = document.getElementById('coCity').value.trim();
-  const state = document.getElementById('coState').value;
+  const name    = document.getElementById('coName').value.trim();
+  const phone   = document.getElementById('coPhone').value.trim();
+  const state   = document.getElementById('coState').value;
   const pincode = document.getElementById('coPincode').value.trim();
-  if(!name||!phone||!address||!city||!state||!pincode){ showToast('Please fill all required fields'); return; }
-  if(phone.length < 10){ showToast('Enter a valid phone number'); return; }
-  if(!window._currentUser){ showToast('Please login first'); openAccountModal(); return; }
 
-  const btn = document.querySelector('.place-order-btn');
-  btn.textContent = '⏳ Placing Order…'; btn.disabled = true;
+  if(!name || !phone || !state || !pincode){
+    showToast('⚠️ Please fill all required fields'); return;
+  }
+  if(phone.length < 10){ showToast('Enter a valid 10-digit phone number'); return; }
+  if(pincode.length < 6){ showToast('Enter a valid 6-digit pincode'); return; }
+
+  const btn = document.getElementById('placeOrderBtn');
+  btn.innerHTML = '⏳ Placing Order…'; btn.disabled = true;
 
   try{
-    const sub = cartTotal();
-    const couponDisc = window._couponDiscount || 0;
-    const ship = getShippingCost(state, sub);
-    const total = sub - couponDisc + ship;
-    const ts = Date.now();
+    const sub     = cartTotal();
+    const ship    = getShippingCost(state, sub);
+    const total   = sub + ship;
+    const ts      = Date.now();
     const shortId = 'TB-' + ts.toString().slice(-6);
-    const docId = window._currentUser.uid + '_' + ts;
+    const payment = window._paymentMethod || 'cod';
+    const paymentLabel = { cod:'Cash on Delivery', upi:'UPI / QR', wa:'WhatsApp Pay' }[payment] || payment;
+
+    // Build items text
+    const itemsText = window.cart.map(i=>`  • ${i.name} ×${i.qty} = ${fmt(i.price*i.qty)}`).join('\n');
+
+    // ── 1. SAVE TO FIREBASE ──
+    const docId = (window._currentUser ? window._currentUser.uid : 'guest') + '_' + ts;
     await setDoc(doc(db,'orders',docId),{
       orderId: shortId,
-      userEmail: window._currentUser.email,
-      userId: window._currentUser.uid,
+      userEmail: window._currentUser ? window._currentUser.email : 'guest',
+      userId: window._currentUser ? window._currentUser.uid : 'guest',
       items: window.cart,
       subtotal: sub,
-      couponCode: window._couponCode || null,
-      couponDiscount: couponDisc,
       shipping: ship,
       total,
-      paymentMethod: window._paymentMethod || 'cod',
-      shippingAddress: { name, phone, address, city, state, pincode },
+      paymentMethod: payment,
+      shippingAddress: { name, phone, state, pincode },
       status: 'Pending',
       statusHistory: [{status:'Pending', time: new Date().toISOString(), desc:'Order received'}],
       createdAt: new Date().toISOString()
     });
-    window.cart=[];
-    window._couponDiscount = 0; window._couponCode = null;
+
+    // ── 2. SEND WHATSAPP MESSAGE (pre-filled) to store ──
+    const waMsg =
+`🛍️ *NEW ORDER — Trendy Buddy*
+━━━━━━━━━━━━━━━━━━━━
+📦 *Order ID:* ${shortId}
+📅 *Date:* ${new Date().toLocaleString('en-IN')}
+
+👤 *Customer Details*
+   Name    : ${name}
+   Phone   : ${phone}
+   State   : ${state}
+   Pincode : ${pincode}
+
+🛒 *Items Ordered*
+${itemsText}
+
+💰 *Payment Summary*
+   Subtotal : ${fmt(sub)}
+   Shipping : ${ship === 0 ? 'FREE' : fmt(ship)}
+   *Total   : ${fmt(total)}*
+
+💳 *Payment Method:* ${paymentLabel}
+━━━━━━━━━━━━━━━━━━━━
+Please confirm this order! ✅`;
+
+    window.open(`https://wa.me/${STORE_WA_NUMBER}?text=${encodeURIComponent(waMsg)}`, '_blank');
+
+    // ── 3. SEND EMAIL (mailto pre-filled) ──
+    const emailSubject = `New Order ${shortId} — ${name}`;
+    const emailBody =
+`New Order Received — Trendy Buddy
+==================================
+Order ID   : ${shortId}
+Date       : ${new Date().toLocaleString('en-IN')}
+
+CUSTOMER DETAILS
+----------------
+Name       : ${name}
+Phone      : ${phone}
+State      : ${state}
+Pincode    : ${pincode}
+
+ITEMS ORDERED
+-------------
+${window.cart.map(i=>`${i.name} x${i.qty}  =  ${fmt(i.price*i.qty)}`).join('\n')}
+
+PAYMENT SUMMARY
+---------------
+Subtotal   : ${fmt(sub)}
+Shipping   : ${ship === 0 ? 'FREE' : fmt(ship)}
+TOTAL      : ${fmt(total)}
+
+Payment    : ${paymentLabel}
+==================================
+`;
+    emailjs.send("service_q10zw8k", "template_yzt8gja", {
+      customer_name: name,
+      customer_email: window._currentUser?.email || '',
+      order_id: shortId,
+      date: new Date().toLocaleString('en-IN'),
+      phone: phone,
+      state: state,
+      pincode: pincode,
+      items: window.cart.map(i=>`${i.name} x${i.qty}  =  ${fmt(i.price*i.qty)}`).join('\n'),
+      subtotal: fmt(sub),
+      shipping: ship === 0 ? 'FREE' : fmt(ship),
+      total: fmt(total),
+      payment_method: paymentLabel,
+    }).catch(err => console.error('Email error:', err));
+
+    // ── 4. CLEAR CART & SHOW SUCCESS ──
+    window.cart = [];
     renderCart(); updateBadges();
     closeCheckoutModal();
 
-    // Success screen
     document.getElementById('cartFooter').style.display='none';
     document.getElementById('cartBody').innerHTML=`
       <div class="order-success">
         <div class="success-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
         <h3>Order Placed! 🎉</h3>
-        <p>Thank you ${name}! We'll confirm your order on WhatsApp shortly.</p>
+        <p>Thank you <strong>${name}</strong>! Your order has been sent via WhatsApp & Email.</p>
         <div class="order-id-box">
           <div class="order-id-label">Your Order ID</div>
           <div class="order-id-val">${shortId}</div>
-          <div class="order-id-hint">Save this to track your order</div>
+          <div class="order-id-hint">Use this to track your order</div>
+        </div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:16px;padding:10px 14px;background:var(--gray);border-radius:8px;line-height:1.6;">
+          ✅ Saved to Firebase<br>
+          💬 WhatsApp message sent to store<br>
+          📧 Email sent to store
         </div>
         <div class="order-success-btns">
           <button class="order-track-btn" onclick="closePanels();setTimeout(()=>openTrackOrderWithId('${shortId}'),200)">📍 Track Order</button>
@@ -1112,8 +1143,10 @@ window.submitCheckoutOrder = async function(){
         </div>
       </div>`;
     openPanel('cartPanel');
+
   }catch(e){
-    btn.textContent='Confirm Order'; btn.disabled=false;
+    btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg> Continue &amp; Place Order';
+    btn.disabled=false;
     showToast('Error placing order: ' + e.message);
   }
 };
