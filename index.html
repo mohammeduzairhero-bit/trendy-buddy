@@ -932,20 +932,22 @@ function listenOrders() {
     snap.forEach(d => orders.push({id:d.id,...d.data()}));
     orders.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
 
-    // Update counts
-    document.getElementById('statOrders').textContent = orders.length;
-    document.getElementById('sbOrderCount').textContent = orders.length;
+    // Update counts (admin-only elements)
+    const statEl = document.getElementById('statOrders');
+    if (statEl) statEl.textContent = orders.length;
+    const sbEl = document.getElementById('sbOrderCount');
+    if (sbEl) sbEl.textContent = orders.length;
 
-    // Update orders table if visible
+    // Update orders table if visible (admin-only elements)
     const tbody = document.getElementById('ordersTableBody');
     const recent = document.getElementById('recentOrdersBody');
 
-    if(!orders.length){
-      tbody.innerHTML='<tr class="empty-row"><td colspan="7">No orders yet</td></tr>';
-      recent.innerHTML='<tr class="empty-row"><td colspan="4">No orders yet</td></tr>';
+    if (!orders.length) {
+      if (tbody) tbody.innerHTML='<tr class="empty-row"><td colspan="7">No orders yet</td></tr>';
+      if (recent) recent.innerHTML='<tr class="empty-row"><td colspan="4">No orders yet</td></tr>';
       return;
     }
-    tbody.innerHTML = orders.map(o=>{
+    if (tbody) tbody.innerHTML = orders.map(o=>{
       const date = o.createdAt?.seconds ? new Date(o.createdAt.seconds*1000).toLocaleDateString('en-IN') : '—';
       const ic = o.items?.length||0;
       return `<tr>
@@ -968,7 +970,7 @@ function listenOrders() {
         </div></td>
       </tr>`;
     }).join('');
-    recent.innerHTML = orders.slice(0,5).map(o=>{
+    if (recent) recent.innerHTML = orders.slice(0,5).map(o=>{
       const date = o.createdAt?.seconds ? new Date(o.createdAt.seconds*1000).toLocaleDateString('en-IN') : '—';
       const sc = {Pending:'badge-yellow',Processing:'badge-blue',Shipped:'badge-blue',Delivered:'badge-green',Cancelled:'badge-red'};
       return `<tr>
