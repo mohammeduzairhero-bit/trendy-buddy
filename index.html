@@ -292,6 +292,23 @@ body{font-family:'Montserrat',sans-serif;background:#eef0f5;color:var(--text);ov
 @media(min-width:640px){.pd-modal{border-radius:20px;}}
 @keyframes slideUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
 .pd-img{width:100%;aspect-ratio:1.3;object-fit:cover;background:#f8f8f8;}
+/* Gallery styles */
+.pd-gallery{position:relative;background:#f8f8f8;overflow:hidden;}
+.pd-gallery-track{display:flex;transition:transform .3s cubic-bezier(.4,0,.2,1);}
+.pd-gallery-slide{flex-shrink:0;width:100%;aspect-ratio:1.3;}
+.pd-gallery-slide img{width:100%;height:100%;object-fit:cover;display:block;}
+.pd-gallery-arrow{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.85);border:none;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:3;box-shadow:0 2px 8px rgba(0,0,0,.18);transition:var(--transition);}
+.pd-gallery-arrow:hover{background:white;box-shadow:0 3px 12px rgba(0,0,0,.22);}
+.pd-gallery-arrow svg{width:16px;height:16px;stroke:var(--navy);stroke-width:2.5;}
+.pd-gallery-prev{left:10px;}.pd-gallery-next{right:10px;}
+.pd-gallery-dots{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:3;}
+.pd-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.5);border:none;cursor:pointer;padding:0;transition:var(--transition);}
+.pd-dot.active{background:white;width:18px;border-radius:4px;}
+.pd-thumbs{display:flex;gap:7px;padding:10px 22px 0;overflow-x:auto;scrollbar-width:none;}
+.pd-thumbs::-webkit-scrollbar{display:none;}
+.pd-thumb{flex-shrink:0;width:56px;height:56px;border-radius:8px;object-fit:cover;cursor:pointer;border:2.5px solid transparent;transition:var(--transition);background:#f0f0f0;}
+.pd-thumb.active{border-color:var(--navy);}
+.pd-thumb:hover{border-color:var(--gray3);}
 .pd-body{padding:22px;}
 .pd-cat{font-size:11px;color:var(--gray3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
 .pd-name{font-size:21px;font-weight:800;color:var(--navy);margin-bottom:10px;line-height:1.25;}
@@ -1696,10 +1713,36 @@ function openProductDetail(id){
   const d = disc(p); const wl = isInWL(id);
   const rc = 50+(id.toString().split('').reduce((s,c)=>s+c.charCodeAt(0),0))%200;
   let pdQty = 1;
+
+  // Build images array — prefer p.images[], fall back to p.img
+  const imgs = (Array.isArray(p.images) && p.images.length) ? p.images : (p.img ? [p.img] : []);
+  const multiImg = imgs.length > 1;
+
+  const galleryHTML = imgs.length === 0
+    ? `<div class="pd-gallery"><div style="aspect-ratio:1.3;background:#f0f0f0;display:flex;align-items:center;justify-content:center;color:#ccc;font-size:48px;">📷</div></div>`
+    : `<div class="pd-gallery" id="pdGallery">
+        <div class="pd-gallery-track" id="pdGalleryTrack">
+          ${imgs.map(url=>`<div class="pd-gallery-slide"><img src="${url}" alt="${p.name}" onerror="this.style.opacity='.3'"></div>`).join('')}
+        </div>
+        ${multiImg ? `
+          <button class="pd-gallery-arrow pd-gallery-prev" onclick="pdGalleryNav(-1)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <button class="pd-gallery-arrow pd-gallery-next" onclick="pdGalleryNav(1)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+          <div class="pd-gallery-dots" id="pdGalleryDots">
+            ${imgs.map((_,i)=>`<button class="pd-dot${i===0?' active':''}" onclick="pdGalleryGoTo(${i})"></button>`).join('')}
+          </div>` : ''}
+      </div>
+      ${multiImg ? `<div class="pd-thumbs" id="pdThumbs">
+        ${imgs.map((url,i)=>`<img class="pd-thumb${i===0?' active':''}" src="${url}" alt="Image ${i+1}" onclick="pdGalleryGoTo(${i})" onerror="this.style.display='none'">`).join('')}
+      </div>` : ''}`;
+
   document.getElementById('pdModalInner').innerHTML=`
     <div class="pd-wrap">
       <button class="pd-close" onclick="closePD()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
-      <img class="pd-img" src="${p.img}" alt="${p.name}" onerror="this.style.display='none'">
+      ${galleryHTML}
       <div class="pd-body">
         <div class="pd-cat">${p.cat}</div>
         <div class="pd-name">${p.name}</div>
@@ -1732,12 +1775,49 @@ function openProductDetail(id){
         </div>
       </div>
     </div>`;
+
+  // Gallery state
+  window._pdGalleryIdx = 0;
+  window._pdGalleryTotal = imgs.length;
   window._pdCurrentQty = 1;
   window._pdCurrentId = id;
+
+  // Touch/swipe support
+  if (multiImg) {
+    const gallery = document.getElementById('pdGallery');
+    let touchStartX = 0;
+    gallery.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, {passive:true});
+    gallery.addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(dx) > 40) pdGalleryNav(dx < 0 ? 1 : -1);
+    }, {passive:true});
+  }
+
   document.getElementById('pdModal').classList.add('show');
   document.body.style.overflow='hidden';
 }
 window.openProductDetail = openProductDetail;
+
+window.pdGalleryGoTo = function(idx) {
+  const total = window._pdGalleryTotal || 1;
+  idx = Math.max(0, Math.min(total - 1, idx));
+  window._pdGalleryIdx = idx;
+  const track = document.getElementById('pdGalleryTrack');
+  if (track) track.style.transform = `translateX(-${idx * 100}%)`;
+  // dots
+  document.querySelectorAll('#pdGalleryDots .pd-dot').forEach((d,i) => d.classList.toggle('active', i===idx));
+  // thumbs
+  document.querySelectorAll('#pdThumbs .pd-thumb').forEach((t,i) => {
+    t.classList.toggle('active', i===idx);
+    if (i===idx) t.scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
+  });
+};
+
+window.pdGalleryNav = function(dir) {
+  const total = window._pdGalleryTotal || 1;
+  const next = ((window._pdGalleryIdx || 0) + dir + total) % total;
+  window.pdGalleryGoTo(next);
+};
 
 window.pdAdjustQty = function(delta){
   window._pdCurrentQty = Math.max(1, (window._pdCurrentQty||1)+delta);
